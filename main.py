@@ -2,10 +2,10 @@ import controllers
 
 while True:
     controllers.greeting()
-    if controllers.choos_action() is False:
+    if controllers.choice_action() is False:
         break
     else:
-        controllers.choos_action()
+        controllers.choice_action()
     
 
 # controllers.

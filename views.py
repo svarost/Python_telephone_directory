@@ -1,4 +1,4 @@
-
+from prettytable import PrettyTable
 
 def print_greeting():
     print('Телефонный справочник\n')
@@ -6,24 +6,22 @@ def print_greeting():
 
 
 def input_data():
-    last_name = input("Введите фамилию: ")
-    first_name = input("Введите имя: ")
-    phone_number = input("Введите номер контакта: ")
-    note = input("Введите категорию контакта: ")
-    return [last_name, first_name, phone_number, note]
+    invites = ['Введите фамилию: ', 'Введите имя: ', 'Введите номер контакта: ', 'Введите категорию контакта: ']
 
-    
+    contact = []
+    for item in invites:
+        temp = input(item)
+        contact.append(temp if len(temp) != 0 else 'None')
+    return contact
+
+
 def print_all(data):
-        print("Фамилия".center(20), "Имя".center(20), "Телефон".center(15), "Описание".center(20))
-        print("-"*85)        
-        for i in range(len(data)):
-            st=[l for l in data[i].split()]
-            for el in st:
-                print(el.center(20), end='')
-            print()
-            # print(data[0+l*4].center(20), data[1+i*4].center(20), data[2+i*4].center(15), data[3+i*4].center(30))
-            # print((data[i]))
-        print("-"*85)
+    th = ['Фамилия', 'Имя', 'Телефон', 'Описание']
+    table = PrettyTable(th)
+    data_list = list(map(lambda item: [el for el in item.split()], data))
+    table.add_rows(data_list)
+    print(table)
+
 
 def input_search():
-    return input("Введите строку поиска: ") # ищет любое вхождение (даже несколько символов)
+    return input("Введите строку поиска: ")  # ищет любое вхождение (даже несколько символов)

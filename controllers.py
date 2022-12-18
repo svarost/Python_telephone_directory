@@ -5,10 +5,10 @@ def greeting():
     # models.init(get_val)
     views.print_greeting()
     # views.choos_action()
-def choos_action():
+def choice_action():
     print('Выберите действие:\n')
     print('1.Добавить запись.\n2.Полный список.\n3.Поиск.\n4.Удалить запись.\n5.Выход')
-    choos=input('Ваш выбор:')
+    choos=input('Ваш выбор: ')
     # print(choos)
 
     str_dictionary_f = models.dictionary_r()
