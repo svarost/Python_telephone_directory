@@ -1,14 +1,17 @@
 import models
 import views
 
+
 def greeting():
     # models.init(get_val)
     views.print_greeting()
     # views.choos_action()
+
+
 def choice_action():
     print('Выберите действие:\n')
     print('1.Добавить запись.\n2.Полный список.\n3.Поиск.\n4.Удалить запись.\n5.Выход')
-    choos=input('Ваш выбор: ')
+    choos = input('Ваш выбор: ')
     # print(choos)
 
     str_dictionary_f = models.dictionary_r()
@@ -24,23 +27,19 @@ def choice_action():
 
         case '3':
             print('Поиск')  ## ищет любое вхождение (даже несколько символов)
-            data,n=models.search(views.input_search())
+            data = models.search(views.input_search())
             views.print_all(data)
 
         case '4':
-            print('Удалить запись')# при нахождении нескольких совпадение удаляет последнее
-            data,n=models.search(views.input_search())
+            print('Удалить запись')  # при нахождении нескольких совпадение удаляет последнее
+            data, n = models.search(views.input_search())
             views.print_all(data)
             print(n)
             models.delete_data(n)
 
-
         case '5':
             print('Выход')
             exit()
-            
-    
-
 
     # if choos == '1':
     #     sep = choice_sep()
@@ -59,11 +58,6 @@ def choice_action():
     #     else:
     #         print("Данные не обнаружены")
 
-
-
-
-
-
 # f_in_path = 'Dictionary_in.txt'
 # f_out_path = 'Dictionary_out.txt'
 # repl='абв'
@@ -74,7 +68,6 @@ def choice_action():
 #     return str1
 # str1=open_r()
 # print(str1)
-
 
 
 # def open_w(res):
