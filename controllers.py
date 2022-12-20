@@ -1,5 +1,6 @@
 import models
 import views
+import os
 
 
 def greeting():
@@ -32,10 +33,11 @@ def choice_action():
 
         case '4':
             print('Удалить запись')  # при нахождении нескольких совпадение удаляет последнее
-            data, n = models.search(views.input_search())
-            views.print_all(data)
-            print(n)
-            models.delete_data(n)
+            models.delete()
+            # data, n = models.search(views.input_search())
+            # views.print_all(data)
+            # print(n)
+            # models.delete_data(n)
 
         case '5':
             print('Выход')

@@ -1,3 +1,8 @@
+from prettytable import PrettyTable
+import os
+
+import views
+
 f_in_path = 'Dictionary.txt'
 f_out_path = 'Dictionary.txt'
 
@@ -38,5 +43,26 @@ def delete_data(n):
 def quit():
     return False
     # return data
+
+
+def delete():
+    data = []
+    with open(f_in_path, 'r', encoding='utf-8') as data_in:
+        for n, line in enumerate(data_in, 1):
+            data.append(line)
+    os.system('cls||clear')
+    table = contacts_to_table(data)
+    print(table)
+    del_row = int(input('Укажите порядковый номер контакта, который необходимо удалить: ')) - 1
+    table.del_row(del_row)
+    print(table)
+
+
+def contacts_to_table(data):
+    th = ['Фамилия', 'Имя', 'Телефон', 'Описание']
+    table = PrettyTable(th)
+    table.add_rows(list(map(lambda item: [el for el in item.split()], data)))
+    table.add_autoindex("№ по порядку")
+    return table
 
 # print(delete_data())
