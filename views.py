@@ -23,8 +23,7 @@ def print_all(data):
     data_list = list(map(lambda item: [el for el in item.split()], data))
     table.add_rows(data_list)
     table.add_autoindex("№ по порядку")
-    print(table._get_options('header'))
-    # print(table)
+    print(table)
 
 
 def input_search():
