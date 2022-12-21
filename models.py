@@ -1,6 +1,9 @@
+import csv
 
 f_in_path = 'Dictionary.txt'
 f_out_path = 'Dictionary.txt'
+csv_out_path = 'Dictionary_out.csv'
+csv_in_path = 'Dictionary_in.csv'
 
 
 def dictionary_r():
@@ -19,17 +22,14 @@ def dictionary_w(data):
 
 
 def search(search_data):
-    data=[]
+    data_row=[]
     number=0
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
-        for n,line in enumerate(data_in,1):
-            if search_data in line:
-                data+=line.split()
+        for n,row in enumerate(data_in,1):
+            if search_data.lower() in row.lower():
+                data_row.append(row.rstrip('\n'))
                 number=n-1
-        # data_row=[]
-        # for row in data_in:
-        #     data_row.append(row.rstrip('\n'))
-        return data, number
+        return data_row, number
 
 def delete_data(n):
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
@@ -39,8 +39,6 @@ def delete_data(n):
     with open(f_in_path, 'w', encoding='utf-8') as data_in:
         data_in.writelines(data)
 
+
 def quit():
     return False
-    # return data
-
-# print(delete_data())
