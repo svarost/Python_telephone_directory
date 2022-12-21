@@ -5,6 +5,7 @@ import views
 
 f_in_path = 'Dictionary.txt'
 f_out_path = 'Dictionary.txt'
+f_out_path1 = 'Dictionary1.txt'
 
 
 def dictionary_r():
@@ -56,6 +57,13 @@ def delete():
     del_row = int(input('Укажите порядковый номер контакта, который необходимо удалить: ')) - 1
     table.del_row(del_row)
     print(table)
+    table.del_column("№ по порядку")
+    lines = table.get_string(header = False, border = False)
+    lists = [[i for i in line.strip().split()] for line in lines.split('\n')]
+
+    with open(f_out_path, 'w', encoding='utf-8') as data_out:
+        for cont in lists:
+            data_out.write(' '.join(cont) + '\n')
 
 
 def contacts_to_table(data):
