@@ -11,7 +11,7 @@ def greeting():
 
 def choice_action():
     print('Выберите действие:\n')
-    print('1.Добавить запись.\n2.Полный список.\n3.Поиск.\n4.Удалить запись.\n5.Выход')
+    print('1.Добавить запись.\n2.Полный список.\n3.Поиск.\n4.Удалить запись.\n5.Экспорт в CSV\n6.Выход')
     choos = input('Ваш выбор: ')
     # print(choos)
 
@@ -40,6 +40,10 @@ def choice_action():
             # models.delete_data(n)
 
         case '5':
+            print('Экспорт телефонной книги в CSV')
+            models.export_to_csv()
+
+        case '6':
             print('Выход')
             exit()
 
