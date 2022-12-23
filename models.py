@@ -31,7 +31,7 @@ def dictionary_w(data):
 def search(search_data: str):
     data = []
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
-        for n, line in enumerate(data_in, 1):
+        for line in data_in:
             if search_data.upper() in line.upper():
                 data.append(line)
         log_files('поиск',search_data)
