@@ -38,14 +38,14 @@ def search(search_data: str):
         return data
 
 
-def delete_data(n):
-    with open(f_in_path, 'r', encoding='utf-8') as data_in:
-        data = data_in.readlines()
-    data_del = data[n]
-    del data[n]
-    log_files('удалена запись',data_del)
-    with open(f_in_path, 'w', encoding='utf-8') as data_in:
-        data_in.writelines(data)
+# def delete_data(n):
+#     with open(f_in_path, 'r', encoding='utf-8') as data_in:
+#         data = data_in.readlines()
+#     data_del = data[n]
+#     del data[n]
+#     log_files('удалена запись',data_del)
+#     with open(f_in_path, 'w', encoding='utf-8') as data_in:
+#         data_in.writelines(data)
 
 
 def delete():
@@ -57,6 +57,8 @@ def delete():
     table = contacts_to_table(data)
     print(table)
     del_row = int(input('Укажите порядковый номер контакта, который необходимо удалить: ')) - 1
+    th=['Фамилия', 'Имя', 'Телефон', 'Описание']
+    log_files('Удалена запись',table.get_string(header = False, border = False, fields=th, start=del_row, end=del_row+1))
     table.del_row(del_row)
     print(table)
     table.del_column("№ по порядку")
@@ -98,7 +100,7 @@ def export_to_csv(ver='utf-8'):
 def log_files(type_action,data):
     with open(f_log_path, 'a', encoding='utf-8') as data_log:
         dt = datetime.now()
-        data_log.write(dt.strftime(f'В %m.%d.%Y %H:%M:%S - {type_action} "{data}"\n'))
+        data_log.write(dt.strftime(f'В %d.%m.%Y %H:%M:%S - {type_action} "{data}"\n'))
 
 
 def quit():
