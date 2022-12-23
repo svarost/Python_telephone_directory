@@ -33,12 +33,8 @@ def choice_action():
             views.print_all(data)
 
         case '4':
-            print('Удалить запись')  # при нахождении нескольких совпадение удаляет последнее
+            print('Удалить запись') 
             models.delete()
-            # data, n = models.search(views.input_search())
-            # views.print_all(data)
-            # print(n)
-            # models.delete_data(n)
 
         case '5':
             print('Экспорт телефонной книги в CSV')
