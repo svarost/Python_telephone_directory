@@ -6,7 +6,5 @@ while True:
         break
     else:
         controllers.choice_action()
-    
 
 # controllers.
-

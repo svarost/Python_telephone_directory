@@ -1,14 +1,19 @@
 import models
 import views
+import os
+
 
 def greeting():
     # models.init(get_val)
     views.print_greeting()
     # views.choos_action()
+
+
 def choice_action():
     print('Выберите действие:\n')
-    print('1.Добавить запись.\n2.Полный список.\n3.Поиск.\n4.Удалить запись.\n5.Выход')
-    choos=input('Ваш выбор: ')
+    print('1.Добавить запись.\n2.Полный список.\n3.Поиск.\n4.Удалить запись.\n'
+        + '5.Экспорт в CSV\n6.Экспорт в CSV (Excel)\n7.Выход')
+    choos = input('Ваш выбор: ')
     # print(choos)
 
     str_dictionary_f = models.dictionary_r()
@@ -24,17 +29,25 @@ def choice_action():
 
         case '3':
             print('Поиск')  ## ищет любое вхождение (даже несколько символов)
-            data,n=models.search(views.input_search())
+            data = models.search(views.input_search())
             views.print_all(data)
 
         case '4':
-            print('Удалить запись')# при нахождении нескольких совпадение удаляет последнее
-            data,n=models.search(views.input_search())
-            views.print_all(data)
-            models.delete_data(n)
-        
+            print('Удалить запись')  # при нахождении нескольких совпадение удаляет последнее
+            models.delete()
+            # data, n = models.search(views.input_search())
+            # views.print_all(data)
+            # print(n)
+            # models.delete_data(n)
+
         case '5':
+            print('Экспорт телефонной книги в CSV')
+            models.export_to_csv()
+
+        case '6':
+            print('Экспорт телефонной книги в CSV (Excel)')
+            models.export_to_csv("Excel")
+
+        case '7':
             print('Выход')
             exit()
-            
-    
