@@ -1,11 +1,12 @@
 from prettytable import PrettyTable
 import os
+import csv
 
 import views
 
 f_in_path = 'Dictionary.txt'
 f_out_path = 'Dictionary.txt'
-f_out_path1 = 'Dictionary1.txt'
+f_exp_csv = 'Dictionary.csv'
 
 
 def dictionary_r():
@@ -41,11 +42,6 @@ def delete_data(n):
         data_in.writelines(data)
 
 
-def quit():
-    return False
-    # return data
-
-
 def delete():
     data = []
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
@@ -73,4 +69,22 @@ def contacts_to_table(data):
     table.add_autoindex("№ по порядку")
     return table
 
-# print(delete_data())
+def export_to_csv(ver='utf-8'):
+    data = []
+
+    with open(f_in_path, 'r', encoding='utf-8') as data_in:
+        for line in data_in:
+            data.append(line)
+
+    table = PrettyTable(['Фамилия', 'Имя', 'Телефон', 'Описание'])
+    table.add_rows(list(map(lambda item: [el for el in item.split()], data)))
+    table.add_autoindex("№ по порядку")
+
+    print(ver)
+
+    if ver == 'Excel':
+        with open(f_exp_csv, 'w') as file_out:
+            file_out.write(table.get_csv_string(header=True, delimiter=';'))
+    else:
+        with open(f_exp_csv, 'w', encoding='utf-8') as file_out:
+            file_out.write(table.get_csv_string(header=True, delimiter=';'))
