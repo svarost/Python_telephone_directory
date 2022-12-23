@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+from datetime import datetime
 import os
 import csv
 
@@ -7,6 +8,8 @@ import views
 f_in_path = 'Dictionary.txt'
 f_out_path = 'Dictionary.txt'
 f_exp_csv = 'Dictionary.csv'
+f_log_path = 'log.txt'
+
 
 
 def dictionary_r():
@@ -22,7 +25,8 @@ def dictionary_r():
 def dictionary_w(data):
     with open(f_out_path, 'a', encoding='utf-8') as data_out:
         data_out.writelines(' '.join(data) + '\n')
-
+        log_files('добавлена запись',' '.join(data))
+        
 
 def search(search_data: str):
     data = []
@@ -30,14 +34,16 @@ def search(search_data: str):
         for n, line in enumerate(data_in, 1):
             if search_data.upper() in line.upper():
                 data.append(line)
+        log_files('поиск',search_data)
         return data
 
 
 def delete_data(n):
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
         data = data_in.readlines()
+    data_del = data[n]
     del data[n]
-
+    log_files('удалена запись',data_del)
     with open(f_in_path, 'w', encoding='utf-8') as data_in:
         data_in.writelines(data)
 
@@ -88,3 +94,12 @@ def export_to_csv(ver='utf-8'):
     else:
         with open(f_exp_csv, 'w', encoding='utf-8') as file_out:
             file_out.write(table.get_csv_string(header=True, delimiter=';'))
+
+def log_files(type_action,data):
+    with open(f_log_path, 'a', encoding='utf-8') as data_log:
+        dt = datetime.now()
+        data_log.write(dt.strftime(f'В %m.%d.%Y %H:%M:%S - {type_action} "{data}"\n'))
+
+
+def quit():
+    return False
