@@ -62,7 +62,7 @@ def contacts_to_table(data):
     table.add_autoindex("№ по порядку")
     return table
 
-def export_to_csv():
+def export_to_csv(ver='utf-8'):
     data = []
 
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
@@ -73,5 +73,11 @@ def export_to_csv():
     table.add_rows(list(map(lambda item: [el for el in item.split()], data)))
     table.add_autoindex("№ по порядку")
 
-    with open(f_exp_csv, 'w') as file_out:
-        file_out.write(table.get_csv_string(header=True, delimiter=';'))
+    print(ver)
+
+    if ver == 'Excel':
+        with open(f_exp_csv, 'w') as file_out:
+            file_out.write(table.get_csv_string(header=True, delimiter=';'))
+    else:
+        with open(f_exp_csv, 'w', encoding='utf-8') as file_out:
+            file_out.write(table.get_csv_string(header=True, delimiter=';'))
