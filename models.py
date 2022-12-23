@@ -2,7 +2,6 @@ from prettytable import PrettyTable
 from datetime import datetime
 import os
 import csv
-
 import views
 
 f_in_path = 'Dictionary.txt'
