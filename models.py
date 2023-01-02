@@ -36,7 +36,8 @@ def search(search_data: str):
         return data
 
 
-def delete():
+def delete(row: int):
+    row -= 1
     data = []
     with open(f_in_path, 'r', encoding='utf-8') as data_in:
         for n, line in enumerate(data_in, 1):
@@ -44,12 +45,12 @@ def delete():
     os.system('cls||clear')
     table = contacts_to_table(data)
     print(table)
-    del_row = int(input('Укажите порядковый номер контакта, который необходимо удалить: ')) - 1
+    # del_row = int(input('Укажите порядковый номер контакта, который необходимо удалить: ')) - 1
     th = ['Фамилия', 'Имя', 'Телефон', 'Описание']
-    log_files('Удалена запись', table.get_string(header=False, border=False, fields=th, start=del_row, end=del_row + 1))
-    table.del_row(del_row)
+    log_files('Удалена запись', table.get_string(header=False, border=False, fields=th, start=row, end=row + 1))
+    table.del_row(row)
     print(table)
-    table.del_column("№ по порядку")
+    table.del_column("№")
     lines = table.get_string(header=False, border=False)
     lists = [[i for i in line.strip().split()] for line in lines.split('\n')]
 

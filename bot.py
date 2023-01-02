@@ -38,6 +38,12 @@ class Form(StatesGroup):
 class Search(StatesGroup):
     request = State()
 
+class Delete_contact(StatesGroup):
+    delete = State()
+
+class Export_csv(StatesGroup):
+    export_csv = State()
+
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
@@ -47,12 +53,6 @@ async def process_start_command(message: types.Message):
 @dp.message_handler(commands=['help'])
 async def process_help_command(message: types.Message):
     await message.reply(MESSAGES['help'])
-
-
-@dp.message_handler(commands=['view_contacts'])
-async def process_help_command(message: types.Message):
-    table = models.contacts_to_table(models.dictionary_r())
-    await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 
 @dp.message_handler(commands=['input_contact'])
@@ -128,23 +128,61 @@ async def process_notion(message: types.Message, state: FSMContext):
 
     await state.finish()
 
+@dp.message_handler(commands=['view_contacts'])
+async def process_help_command(message: types.Message):
+    table = models.contacts_to_table(models.dictionary_r())
+    await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+
 
 @dp.message_handler(commands='search')
-async def input_contact(message: types.Message):
+async def search(message: types.Message):
     await Search.request.set()
     await message.reply("Введите запрос:")
 
 
 # Сюда приходит ответ с запросом поиска
 @dp.message_handler(state=Search.request)
-async def process_notion(message: types.Message, state: FSMContext):
-    print(message.text)
+async def process_search(message: types.Message, state: FSMContext):
     result = models.search(message.text)
     table = models.contacts_to_table(result)
     await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
     await state.finish()
 
+
+@dp.message_handler(commands='delete')
+async def delete(message: types.Message, state: FSMContext):
+    await Delete_contact.delete.set()
+    table = models.contacts_to_table(models.dictionary_r())
+    await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    await message.reply("Укажите порядковый номер контакта, который необходимо удалить:")
+
+
+# Сюда приходит ответ с номером контакта для удаления
+@dp.message_handler(state=Delete_contact.delete)
+async def process_delete(message: types.Message, state: FSMContext):
+    models.delete(int(message.text))
+    table = models.contacts_to_table(models.dictionary_r())
+    await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+
+    await state.finish()
+
+
+@dp.message_handler(commands='export_csv')
+async def export_csv(message: types.Message, state: FSMContext):
+    await Export_csv.export_csv.set()
+    await message.reply('Для экспорта в кодировки MS Excell, напишите '
+         '"Excell", иначе напишите любоее сообщение.')
+
+@dp.message_handler(state=Export_csv.export_csv)
+async def process_export_csv(message: types.Message, state: FSMContext):
+    if message.text.lower() == 'excel':
+        models.export_to_csv('Excel')
+    else:
+        models.export_to_csv()
+    await message.reply_document(open('Dictionary.csv', 'rb'))
+
+    await state.finish()
 
 @dp.message_handler()
 async def echo_message(msg: types.Message):

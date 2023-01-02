@@ -25,6 +25,9 @@ def print_all(data):
     table.add_autoindex("№")
     print(table)
 
+def delete_contact():
+    del_row = int(input('Укажите порядковый номер контакта, который необходимо удалить: '))
+
 
 def input_search():
     return input("Введите строку поиска: ")  # ищет любое вхождение (даже несколько символов)
