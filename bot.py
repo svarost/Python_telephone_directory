@@ -5,10 +5,16 @@ from aiogram.utils import executor
 from aiogram.dispatcher import Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
-
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters import Text
+import aiogram.utils.markdown as md
+from aiogram.types import ParseMode
 from bot_config import TOKEN
 from bot_utils import TestStates
 from bot_messages import MESSAGES
+
+import models
 
 
 logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8s [%(asctime)s] %(message)s',
@@ -17,8 +23,20 @@ logging.basicConfig(format=u'%(filename)+13s [ LINE:%(lineno)-4s] %(levelname)-8
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
+storege = MemoryStorage()
 
 dp.middleware.setup(LoggingMiddleware())
+
+
+# создаём форму и указываем поля
+class Form(StatesGroup):
+    last_name = State()
+    name = State()
+    tel_number = State()
+    notion = State()
+
+class Search(StatesGroup):
+    request = State()
 
 
 @dp.message_handler(commands=['start'])
@@ -31,48 +49,101 @@ async def process_help_command(message: types.Message):
     await message.reply(MESSAGES['help'])
 
 
-@dp.message_handler(state='*', commands=['setstate'])
-async def process_setstate_command(message: types.Message):
-    argument = message.get_args()
-    state = dp.current_state(user=message.from_user.id)
-    if not argument:
-        await state.reset_state()
-        return await message.reply(MESSAGES['state_reset'])
-
-    if (not argument.isdigit()) or (not int(argument) < len(TestStates.all())):
-        return await message.reply(MESSAGES['invalid_key'].format(key=argument))
-
-    await state.set_state(TestStates.all()[int(argument)])
-    await message.reply(MESSAGES['state_change'], reply=False)
+@dp.message_handler(commands=['view_contacts'])
+async def process_help_command(message: types.Message):
+    table = models.contacts_to_table(models.dictionary_r())
+    await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
 
 
-@dp.message_handler(state=TestStates.TEST_STATE_1)
-async def first_test_state_case_met(message: types.Message):
-    await message.reply('Первый!', reply=False)
+@dp.message_handler(commands=['input_contact'])
+async def input_contact(message: types.Message):
+    await Form.last_name.set()
+    await message.reply("Введите фамилию контакта:")
 
 
-@dp.message_handler(state=TestStates.TEST_STATE_2[0])
-async def second_test_state_case_met(message: types.Message):
-    await message.reply('Второй!', reply=False)
+# Добавляем возможность отмены, если пользователь передумал заполнять
+@dp.message_handler(state='*', commands='cancel')
+@dp.message_handler(Text(equals='отмена', ignore_case=True), state='*')
+async def cancel_handler(message: types.Message, state: FSMContext):
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+
+    await state.finish()
+    await message.reply('ОК')
 
 
-@dp.message_handler(state=TestStates.TEST_STATE_3 | TestStates.TEST_STATE_4)
-async def third_or_fourth_test_state_case_met(message: types.Message):
-    await message.reply('Третий или четвертый!', reply=False)
+# Сюда приходит ответ с фамилией
+@dp.message_handler(state=Form.last_name)
+async def process_last_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['last_name'] = message.text
+
+    await Form.next()
+    await message.reply("Введите имя контакта:")
 
 
-@dp.message_handler(state=TestStates.all())
-async def some_test_state_case_met(message: types.Message):
-    state = dp.current_state(user=message.from_user.id)
-    text = MESSAGES['current_state'].format(
-        current_state=await state.get_state(),
-        states=TestStates.all()
-    # with dp.current_state(user=message.from_user.id) as state:
-    #     text = MESSAGES['current_state'].format(
-    #         current_state=await state.get_state(),
-    #         states=TestStates.all()
+# Сюда приходит ответ с именем
+@dp.message_handler(state=Form.name)
+async def process_name(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['name'] = message.text
+
+    await Form.next()
+    await message.reply("Введите номер телефона контакта:")
+
+
+# Сюда приходит ответ с номером телефона
+@dp.message_handler(state=Form.tel_number)
+async def process_tel_number(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['tel_number'] = message.text
+
+    await Form.next()
+    await message.reply("Введите номер категорию контакта:")
+
+
+# Сюда приходит ответ с категорией контакта
+@dp.message_handler(state=Form.notion)
+async def process_notion(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['notion'] = message.text
+        markup = types.ReplyKeyboardRemove()
+        print(data.values())
+        models.dictionary_w(data.values())
+
+        await bot.send_message(
+            message.chat.id,
+            md.text(
+                md.text('Контакт'),
+                md.text('Фамилия:', data['last_name']),
+                md.text('Имя:', data['name']),
+                md.text('Номер телефона:', data['tel_number']),
+                md.text('Категория:', data['notion']),
+                sep='\n',
+            ),
+            reply_markup=markup,
+            parse_mode=ParseMode.MARKDOWN,
         )
-    await message.reply(text, reply=False)
+
+    await state.finish()
+
+
+@dp.message_handler(commands='search')
+async def input_contact(message: types.Message):
+    await Search.request.set()
+    await message.reply("Введите запрос:")
+
+
+# Сюда приходит ответ с запросом поиска
+@dp.message_handler(state=Search.request)
+async def process_notion(message: types.Message, state: FSMContext):
+    print(message.text)
+    result = models.search(message.text)
+    table = models.contacts_to_table(result)
+    await message.reply(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+
+    await state.finish()
 
 
 @dp.message_handler()

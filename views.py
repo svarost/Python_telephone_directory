@@ -22,7 +22,7 @@ def print_all(data):
     table = PrettyTable(th)
     data_list = list(map(lambda item: [el for el in item.split()], data))
     table.add_rows(data_list)
-    table.add_autoindex("№ по порядку")
+    table.add_autoindex("№")
     print(table)
 
 
