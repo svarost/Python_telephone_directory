@@ -1,6 +1,3 @@
-from bot_utils import TestStates
-
-
 help_message = '/input_contact - добавить контакт\n' \
                '/view_contacts - вывести список контактов\n' \
                '/search - поиск контактов\n' \
